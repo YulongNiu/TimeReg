@@ -1,0 +1,15 @@
+Package: TimeReg
+Title: A package for find gene regulation patterns from time-course data.
+Description: This package provides functions to plot regulator/regulons patterns and cluster regulons. The time-course data
+are from microarray, q-PCR, and other method to measure the quantity of gene expression.
+Version: 0.1
+Author: Yulong Niu <niuylscu@gmail.com>
+Maintainer: Yulong Niu <niuylscu@gmail.com>
+Depends:
+    R (>= 3.0.2)
+Imports:
+    ggplot2,
+    XML
+ByteCompile: true
+License: GPL
+LazyData: true
