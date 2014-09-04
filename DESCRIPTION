@@ -9,8 +9,8 @@ Maintainer: Yulong Niu <niuylscu@gmail.com>
 Depends:
     R (>= 3.0.2)
 Imports:
-    ggplot2,
-    XML
+    reshape2,
+    ggplot2
 ByteCompile: true
 License: GPL
 LazyData: true
