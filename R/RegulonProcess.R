@@ -54,6 +54,34 @@ df2regulator <- function(dfFile){
 }
 
 
+
+##' Transfer list to proper list data
+##'
+##' Transcription unit data are commonly stored in a list. This function convert the TU data to proper list format.
+##' @title List to TU list
+##' @param lsFile TU list data. In each TU, a character vector contains all the genes in this TU.
+##' @return A list of TU
+##' @examples
+##' data(smuTU)
+##' smuTU <- ls2TU(smuTU)
+##' @author Yulong Niu \email{niuylscu@@gmail.com}
+##' @export
+##' 
+ls2TU <- function(lsFile) {
+
+  TUList <- lapply(lsFile, function(x) {
+    len <- length(x)
+    x <- cbind(rep('strucgene', len), x)
+    colnames(x) <- NULL
+    return(x)
+  })
+
+  return(TUList)
+}
+
+
+
+
 ##' Melt regulator data, regulon data, and the degree of differential changes into a list.
 ##'
 ##' For a time-course experiment, we want to see the gene expression patterns of the regulators/regulons. "MeltReg" function provides a way to melt regulator, regulon, and degree of changes. The corresponding regulator and regulon data are recognized by the name.
@@ -90,7 +118,7 @@ MeltReg <- function(regulatorData, regulonData, diffData) {
     diffReg <- diffData[match(geneNames, rownames(diffData)), ]
     mergedReg[[i]] <- cbind(mergedReg[[i]], diffReg)
     colnames(mergedReg[[i]])[1:2] <- c('Type', 'GeneName')
-
+    
     # melt data for ggplot2
     mergedReg[[i]] <- melt(mergedReg[[i]], id.vars = c('Type', 'GeneName'),
                            variable.name = 'TimePoint',
@@ -105,6 +133,40 @@ MeltReg <- function(regulatorData, regulonData, diffData) {
 
 
 
+##' Melt transcriptional units data and the degree of differential changes into a list.
+##'
+##' In prokarytic genomes, the gene expression patterns are closely related to transcrional units (TU). "mergeTU" provides a way to merge TU and degree of changes.
+##' @title Melt TU and degree of changes data
+##' @param TUData formatted TU list data. The structural genes in TU should be a subset of row names of "diffData". If not, NA will be returned.
+##' @inheritParams MeltReg
+##' @return A list merged data
+##' @examples
+##' data(smuTU)
+##' smuTU <- ls2TU(smuTU)
+##' mergedTU <- MeltTU(smuTU, smuHeatFC)
+##' @author Yulong Niu \email{niuylscu@@gmail.com}
+##' @importFrom reshape2 melt
+##' @export
+##' 
+MeltTU <- function(TUData, diffData) {
+
+  mergedTU <- lapply(TUData, function(x) {
+    
+    diffReg <- diffData[match(x[, 2], rownames(diffData)), ]
+    mergedTUEach <- cbind(x, diffReg)
+    colnames(mergedTUEach)[1:2] <- c('Type', 'GeneName')
+
+    # melt data for ggplot2
+    meltTUEach <- melt(mergedTUEach, id.vars = c('Type', 'GeneName'),
+                           variable.name = 'TimePoint',
+                           value.name = 'Diff')
+
+    return(meltTUEach)
+    
+  })
+
+  return(mergedTU)
+}
 
 
 
@@ -151,6 +213,19 @@ NULL
 ##' @name smuHeatFC
 ##' @format A data frame
 ##' @source GEO Database GSE59302
+##' @author Yulong Niu \email{niuylscu@@gmail.com}
+##' 
+NULL
+
+
+
+##' Streptococcus mutans transcriptional units data
+##'
+##' A list containing the S.mutans transcriptional units data from "Prokaryotic Operon DataBase". 
+##' @docType data
+##' @name smuTU
+##' @format A list
+##' @source \url{http://operons.ibt.unam.mx/OperonPredictor/}
 ##' @author Yulong Niu \email{niuylscu@@gmail.com}
 ##' 
 NULL
